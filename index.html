@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Hole Orbit Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Black Hole Orbit Simulator</h1>
+<div class="controls">
+  <label>Black Hole Mass (kg): <input type="range" id="bhMass" min="1e30" max="1e32" step="1e30" value="5e30"></label>
+  <span id="bhMassVal"></span><br>
+  <label>Black Hole Spin: <input type="range" id="bhSpin" min="0" max="1" step="0.01" value="0"></label>
+  <span id="bhSpinVal"></span><br>
+  <label>Orbit Radius (m): <input type="range" id="orbitRadius" min="1e4" max="1e7" step="1e4" value="2e5"></label>
+  <span id="orbitRadiusVal"></span><br>
+  <label>Orbiting Body Density (kg/m^3): <input type="range" id="objDensity" min="500" max="10000" step="100" value="3000"></label>
+  <span id="objDensityVal"></span>
+</div>
+<canvas id="simCanvas" width="600" height="600"></canvas>
+<p id="rocheStatus"></p>
+<script src="script.js"></script>
+</body>
+</html>
