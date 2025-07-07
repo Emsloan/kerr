@@ -11,3 +11,8 @@ canvas {
   background: #000;
   border: 1px solid #444;
 }
+.note {
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  color: #ccc;
+}
