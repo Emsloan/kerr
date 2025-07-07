@@ -50,20 +50,36 @@ function draw() {
   const rSch = schwarzschildRadius(mass);
   const rLimit = rocheLimit(mass, density);
 
-  // map distance to canvas coordinates
-  const scale = 100 / rSch; // 100 px per Schwarzschild radius
+  // choose a scale so the largest distance fits on the canvas
+  const maxDist = Math.max(orbitRadius, rLimit) * 1.1;
+  const scale = (canvas.width / 2 - 20) / maxDist;
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
 
-  // draw black hole (scaled by spin slightly)
-  const bhRadius = rSch * scale * (1 + spin * 0.5);
-  ctx.fillStyle = 'black';
+  // draw orbit path
+  ctx.strokeStyle = '#555';
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, orbitRadius * scale, 0, 2 * Math.PI);
+  ctx.stroke();
+
+  // draw Roche limit circle
+  ctx.strokeStyle = 'red';
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, rLimit * scale, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // draw black hole (ensure minimum visible radius)
+  const bhRadius = Math.max(2, rSch * scale * (1 + spin * 0.5));
+  ctx.fillStyle = '#222';
   ctx.beginPath();
   ctx.arc(centerX, centerY, bhRadius, 0, 2 * Math.PI);
   ctx.fill();
-  ctx.strokeStyle = '#444';
+  ctx.strokeStyle = '#aaa';
   ctx.stroke();
 
+  // position of orbiting object
   angle += 0.01;
   const objX = centerX + Math.cos(angle) * orbitRadius * scale;
   const objY = centerY + Math.sin(angle) * orbitRadius * scale;
@@ -74,8 +90,7 @@ function draw() {
   ctx.fill();
 
   // Roche limit indicator
-  rocheStatus.textContent = orbitRadius < rLimit ?
-    'Inside Roche Limit' : 'Outside Roche Limit';
+  rocheStatus.textContent = `${orbitRadius < rLimit ? 'Inside' : 'Outside'} Roche Limit (limit ≈ ${rLimit.toExponential(2)} m)`;
   rocheStatus.style.color = orbitRadius < rLimit ? 'red' : 'lightgreen';
 
   requestAnimationFrame(draw);
