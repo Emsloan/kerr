@@ -34,21 +34,23 @@ function blackHoleDensity(mass) {
   return mass / volume;
 }
 
-function rocheLimit(mass, objDensity) {
+function rocheLimit(mass, objDensity, spin) {
   const r = schwarzschildRadius(mass);
   const bhDensity = blackHoleDensity(mass);
-  return 2.44 * r * Math.pow(bhDensity / objDensity, 1/3);
+  let baseLimit = 2.44 * r * Math.pow(bhDensity / objDensity, 1/3);
+  // simplified prograde adjustment: higher spin reduces the limit
+  return baseLimit / (1 + spin);
 }
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const mass = parseFloat(bhMassSlider.value);
-  const spin = parseFloat(bhSpinSlider.value); // not used in calc
+  const spin = parseFloat(bhSpinSlider.value);
   const orbitRadius = parseFloat(orbitRadiusSlider.value);
   const density = parseFloat(objDensitySlider.value);
 
   const rSch = schwarzschildRadius(mass);
-  const rLimit = rocheLimit(mass, density);
+  const rLimit = rocheLimit(mass, density, spin);
 
   // choose a scale so the largest distance fits on the canvas
   const maxDist = Math.max(orbitRadius, rLimit) * 1.1;

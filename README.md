@@ -8,7 +8,8 @@ It allows adjustment of:
 - **Density** of the orbiting body
 
 The page shows whether the object is inside or outside the Roche limit based on the
-selected parameters.
+selected parameters. The Roche limit now decreases with black hole spin to approximate
+the effect of spacetime waves for a prograde orbit.
 
 Open `index.html` in a modern browser to try it out. The orbit radius slider
 now reaches up to 1e10 m and the canvas displays both the Roche limit (red
