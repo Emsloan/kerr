@@ -10,6 +10,7 @@ const bhMassVal = document.getElementById('bhMassVal');
 const bhSpinVal = document.getElementById('bhSpinVal');
 const orbitRadiusVal = document.getElementById('orbitRadiusVal');
 const objDensityVal = document.getElementById('objDensityVal');
+const timeDilationVal = document.getElementById('timeDilation');
 
 const rocheStatus = document.getElementById('rocheStatus');
 const canvas = document.getElementById('simCanvas');
@@ -40,6 +41,15 @@ function rocheLimit(mass, objDensity, spin) {
   let baseLimit = 2.44 * r * Math.pow(bhDensity / objDensity, 1/3);
   // simplified prograde adjustment: higher spin reduces the limit
   return baseLimit / (1 + spin);
+}
+
+function timeDilation(mass, radius) {
+  const rSch = schwarzschildRadius(mass);
+  const factor = Math.sqrt(1 - (3 * rSch) / (2 * radius));
+  if (isNaN(factor) || factor < 0) {
+    return 0;
+  }
+  return factor;
 }
 
 function draw() {
@@ -94,6 +104,10 @@ function draw() {
   // Roche limit indicator
   rocheStatus.textContent = `${orbitRadius < rLimit ? 'Inside' : 'Outside'} Roche Limit (limit ≈ ${rLimit.toExponential(2)} m)`;
   rocheStatus.style.color = orbitRadius < rLimit ? 'red' : 'lightgreen';
+
+  // time dilation display
+  const dil = timeDilation(mass, orbitRadius);
+  timeDilationVal.textContent = dil.toFixed(3);
 
   requestAnimationFrame(draw);
 }
