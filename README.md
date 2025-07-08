@@ -15,7 +15,8 @@ The page shows whether the object is inside or outside the Roche limit based on 
 selected parameters. The Roche limit now decreases with black hole spin to approximate
 the effect of spacetime waves for a prograde orbit.
 
-Open `index.html` in a modern browser to try it out. The orbit radius slider
-now reaches up to 1e10 m and the canvas displays both the Roche limit (red
-dashed circle) and the orbital path, automatically scaling the view so the
-features remain visible.
+Open `index.html` in a modern browser to try it out. The black hole mass slider
+now allows values up to 1e36 kg to represent supermassive black holes. The
+orbit radius slider reaches up to 1e10 m and the canvas displays both the Roche
+limit (red dashed circle) and the orbital path, automatically scaling the view
+so the features remain visible.
