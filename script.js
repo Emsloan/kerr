@@ -11,6 +11,8 @@ const bhSpinVal = document.getElementById('bhSpinVal');
 const orbitRadiusVal = document.getElementById('orbitRadiusVal');
 const objDensityVal = document.getElementById('objDensityVal');
 const timeDilationVal = document.getElementById('timeDilation');
+const gravDilVal = document.getElementById('gravDil');
+const velDilVal = document.getElementById('velDil');
 
 const rocheStatus = document.getElementById('rocheStatus');
 const canvas = document.getElementById('simCanvas');
@@ -43,13 +45,28 @@ function rocheLimit(mass, objDensity, spin) {
   return baseLimit / (1 + spin);
 }
 
-function timeDilation(mass, radius) {
+function gravitationalTimeDilation(mass, radius) {
   const rSch = schwarzschildRadius(mass);
-  const factor = Math.sqrt(1 - (3 * rSch) / (2 * radius));
+  const factor = Math.sqrt(1 - rSch / radius);
   if (isNaN(factor) || factor < 0) {
     return 0;
   }
   return factor;
+}
+
+function orbitalVelocityTimeDilation(mass, radius) {
+  const v = Math.sqrt((G * mass) / radius);
+  const factor = Math.sqrt(1 - (v * v) / (c * c));
+  if (isNaN(factor) || factor < 0) {
+    return 0;
+  }
+  return factor;
+}
+
+function totalTimeDilation(mass, radius) {
+  const gDil = gravitationalTimeDilation(mass, radius);
+  const vDil = orbitalVelocityTimeDilation(mass, radius);
+  return gDil + vDil;
 }
 
 function draw() {
@@ -106,8 +123,12 @@ function draw() {
   rocheStatus.style.color = orbitRadius < rLimit ? 'red' : 'lightgreen';
 
   // time dilation display
-  const dil = timeDilation(mass, orbitRadius);
-  timeDilationVal.textContent = dil.toFixed(3);
+  const gDil = gravitationalTimeDilation(mass, orbitRadius);
+  const vDil = orbitalVelocityTimeDilation(mass, orbitRadius);
+  const totalDil = totalTimeDilation(mass, orbitRadius);
+  gravDilVal.textContent = gDil.toFixed(3);
+  velDilVal.textContent = vDil.toFixed(3);
+  timeDilationVal.textContent = totalDil.toFixed(3);
 
   requestAnimationFrame(draw);
 }
