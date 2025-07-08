@@ -54,18 +54,45 @@ function gravitationalTimeDilation(mass, radius) {
   return factor;
 }
 
-function orbitalVelocityTimeDilation(mass, radius) {
-  const v = Math.sqrt((G * mass) / radius);
-  const factor = Math.sqrt(1 - (v * v) / (c * c));
-  if (isNaN(factor) || factor < 0) {
+function orbitalVelocityTimeDilation(mass, radius, spin) {
+  // avoid division by zero or invalid parameters
+  if (!mass || !radius) {
     return 0;
   }
+
+  // Schwarzschild fallback when spin is zero
+  if (!spin) {
+    const v = Math.sqrt((G * mass) / radius);
+    const factorSq = 1 - (v * v) / (c * c);
+    return factorSq > 0 && isFinite(factorSq) ? Math.sqrt(factorSq) : 0;
+  }
+
+  const r_scaled = (radius * c * c) / (G * mass);
+  if (!isFinite(r_scaled) || r_scaled <= 0) {
+    return 0;
+  }
+
+  const denom = Math.pow(r_scaled, 1.5) + spin;
+  if (!isFinite(denom) || denom === 0) {
+    return 0;
+  }
+
+  const omega = (c ** 3) / (G * mass) / denom;
+
+  const g_tt = -(1 - 2 / r_scaled);
+  const g_tphi = -2 * spin / r_scaled;
+  const g_phiphi = r_scaled ** 2 + spin ** 2 + (2 * spin ** 2) / r_scaled;
+
+  const factorSquared = -g_tt - 2 * g_tphi * omega - g_phiphi * omega ** 2;
+  const factor = factorSquared > 0 && isFinite(factorSquared)
+    ? Math.sqrt(factorSquared)
+    : 0;
   return factor;
 }
 
-function totalTimeDilation(mass, radius) {
+function totalTimeDilation(mass, radius, spin) {
   const gDil = gravitationalTimeDilation(mass, radius);
-  const vDil = orbitalVelocityTimeDilation(mass, radius);
+  const vDil = orbitalVelocityTimeDilation(mass, radius, spin);
   return gDil + vDil;
 }
 
@@ -124,8 +151,8 @@ function draw() {
 
   // time dilation display
   const gDil = gravitationalTimeDilation(mass, orbitRadius);
-  const vDil = orbitalVelocityTimeDilation(mass, orbitRadius);
-  const totalDil = totalTimeDilation(mass, orbitRadius);
+  const vDil = orbitalVelocityTimeDilation(mass, orbitRadius, spin);
+  const totalDil = totalTimeDilation(mass, orbitRadius, spin);
   gravDilVal.textContent = gDil.toFixed(3);
   velDilVal.textContent = vDil.toFixed(3);
   timeDilationVal.textContent = totalDil.toFixed(3);
